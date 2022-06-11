@@ -11,6 +11,6 @@ public enum ConnectivityType {
             case "8":
                 return Eight;
         }
-        throw new IllegalArgumentException("Invalid value: " + x);
+        throw new IllegalArgumentException("Invalid ConnectivityType value: " + x);
     }
 }

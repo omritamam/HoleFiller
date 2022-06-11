@@ -4,64 +4,75 @@ import Lib.Models.ConnectivityType;
 import Lib.Models.IWeightFunction;
 import Lib.Models.Image;
 import Lib.Models.Pixel;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
 
 public class HoleFiller {
 
-    private final ConnectivityType connectivityType;
-    private final IWeightFunction weightFunction;
     private final Image image;
+    private final ArrayList<Pixel> border;
+    private final ArrayList<Pixel> hole;
+    private final IWeightFunction weightFunction;
+    private final ConnectivityType connectivityType;
+
 
     public HoleFiller(Image image,IWeightFunction weightFunction, ConnectivityType connectivityType) {
         this.image = image;
         this.weightFunction = weightFunction;
         this.connectivityType = connectivityType;
+        this.border = new ArrayList<>();
+        this.hole = new ArrayList<>();
+        initBorderAndHole();
     }
 
     public Image fillHole() {
-        for (int i = 0; i < image.width; i++) {
-            for (int j = 0; j < image.height; j++) {
-                var curPixel = image.getPixel(i, j);
-                if (curPixel.color == -1) {
-                    var neighbors = getNeighbors(image.getPixel(i, j));
-                    var newColor = getNewColor(curPixel, neighbors);
-                    image.setPixel(i, j, newColor);
-                }
+
+        //split the holePixels into cores parts
+        var cores = Runtime.getRuntime().availableProcessors();
+        var threads = new Thread[cores];
+        for(int i=0; i<cores; i++) {
+            var start = i*hole.size()/cores;
+            var end = (i+1)*hole.size()/cores;
+            var thread = new HoleFillerThread(hole.subList(start, end), border, image, weightFunction);
+            threads[i] = new Thread(thread);
+            threads[i].start();
+        }
+        // Wait for all threads to finish
+        for(int i=0; i<cores; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         return image;
     }
-
-    private Set<Pixel> getNeighbors(Pixel pixel) {
-        if (connectivityType == ConnectivityType.Four) {
-            return getNeighborsByDistance(pixel, 1);
-        } else {
-            return getNeighborsByDistance(pixel, 2);
+    private void updateNeighbors(Pixel pixel, ArrayList<Pixel> neighbors) {
+        neighbors.clear();
+        if (connectivityType == ConnectivityType.Eight) {
+            neighbors.add(image.getPixel(pixel.x - 1, pixel.y - 1));
+            neighbors.add(image.getPixel(pixel.x + 1, pixel.y - 1));
+            neighbors.add(image.getPixel(pixel.x - 1, pixel.y + 1));
+            neighbors.add(image.getPixel(pixel.x + 1, pixel.y + 1));
         }
+        neighbors.add(image.getPixel(pixel.x, pixel.y + 1));
+        neighbors.add(image.getPixel(pixel.x, pixel.y - 1));
+        neighbors.add(image.getPixel(pixel.x - 1, pixel.y));
+        neighbors.add(image.getPixel(pixel.x + 1, pixel.y));
     }
 
-    private Set<Pixel> getNeighborsByDistance(Pixel center, int distance) {
-        var neighbors = new HashSet<Pixel>();
-        for(int xOffset = -distance; xOffset < distance; xOffset++) {
-            int distanceRemainder = distance - Math.abs(xOffset);
-            for (int yOffset = -distanceRemainder; yOffset <= distanceRemainder; yOffset++) {
-                neighbors.add(image.getPixel(center.x + xOffset, center.y + yOffset));
-            }
-        }
-        return neighbors;
-    }
 
-    private float getNewColor(Pixel pixel,Set<Pixel> neighbors) {
-        var sumWeights = 0f;
-        var sumColors = 0f;
-        for (var neighbor : neighbors) {
-            if(neighbor.color != -1) {
-                var weight = weightFunction.getWeight(pixel, neighbor);
-                sumColors += neighbor.color * weight;
-                sumWeights += weight;
+    void initBorderAndHole() {
+        var currentNeighbors = new ArrayList<Pixel>();
+        for (var pixel : image) {
+            if (pixel.getColor() == -1) {
+                hole.add(pixel);
+                updateNeighbors(pixel, currentNeighbors);
+                currentNeighbors.forEach(neighbor -> {
+                    if (neighbor.getColor() != -1) {
+                        border.add(neighbor);
+                    }
+                });
             }
         }
-        return sumColors / sumWeights;
     }
 }

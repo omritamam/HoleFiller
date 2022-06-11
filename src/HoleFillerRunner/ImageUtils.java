@@ -10,15 +10,18 @@ import static org.opencv.core.Core.NATIVE_LIBRARY_NAME;
 
 class ImageUtils {
 
+    public static final double BLACK_THRESHOLD = 0.05 * 255;
+
     public static Image mergeImages(Image image, Image maskedImage) {
          validateImages(image, maskedImage);
          Image mergedImage = new Image(image.width, image.height);
          for (int x = 0; x < image.width; x++) {
              for (int y = 0; y < image.height; y++) {
-                 if (maskedImage.getPixel(x, y).color == -1) {
+                 // check if masked image pixel is black
+                 if (maskedImage.getPixel(x, y).getColor() < BLACK_THRESHOLD) {
                      mergedImage.setPixel(x, y, -1);
                  } else {
-                     mergedImage.setPixel(x, y, image.getPixel(x, y).color);
+                     mergedImage.setPixel(x, y, image.getPixel(x, y).getColor());
                  }
              }
          }
@@ -31,23 +34,27 @@ class ImageUtils {
         }
     }
 
-    public static void writeImage(Image outputImage) {
+    public static void writeImage(Image outputImage, String fileName) {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         Imgcodecs imageCodecs = new Imgcodecs();
 
         //Reading the Image from the file and storing it in to a Matrix object
         Mat mat = new Mat(outputImage.height, outputImage.width, CvType.CV_8UC1);
-        for(int row=0;row<outputImage.height;row++){
-            for(int col=0;col<outputImage.width;col++)
-                mat.put(row, col, outputImage.getPixel(col, row).color);
+        for(int y=0;y<outputImage.height;y++){
+            for(int x=0;x<outputImage.width;x++){
+                mat.put(y, x, outputImage.getPixel(x, y).getColor());
+            }
         }
-
-        String file2 = "sample_resaved.jpg";
-        imageCodecs.imwrite(file2, mat);
+        imageCodecs.imwrite(fileName, mat);
 
     }
 
     public static Image loadImage(String filePath) {
+        //Check if files are images
+        if (!(filePath.endsWith(".png") || filePath.endsWith(".jpg"))) {
+            System.out.println("Input image file must be a png or jpg");
+            System.exit(1);
+        }
         System.loadLibrary(NATIVE_LIBRARY_NAME);
         Mat rgb = new Imgcodecs().imread(filePath);
         Mat rawImg = new Mat();
@@ -55,7 +62,7 @@ class ImageUtils {
         Image image = new Image(rawImg.width(), rawImg.height());
         for (int x = 0; x < rawImg.width(); x++) {
             for (int y = 0; y < rawImg.height(); y++) {
-                double grayscale = rawImg.get(y, x)[0];
+                var grayscale = rawImg.get(y, x)[0];
                 image.setPixel(x, y, grayscale);
             }
         }

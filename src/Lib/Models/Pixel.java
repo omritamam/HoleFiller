@@ -3,7 +3,7 @@ package Lib.Models;
 public class Pixel {
     public final int x;
     public final int y;
-    public double color;
+    private double color;
 
     public Pixel(int x, int y, double grayscale) {
         this.x = x;
@@ -11,4 +11,11 @@ public class Pixel {
         this.color = grayscale;
     }
 
+    public void setColor(double grayscale) {
+        this.color = grayscale;
+    }
+
+    public double getColor() {
+        return this.color;
+    }
 }
