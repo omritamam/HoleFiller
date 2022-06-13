@@ -1,0 +1,10 @@
+1. For each pixel in the hole , the pixel is replaced by the average of the pixels in the border.
+Finding the weight and distance of each pixel to another pixel in is O(1) runtime complexity.
+Thus, the runtime is O(n*m) * O(1) = O(n*m) where n is the number of pixels in the hole and m is the number of pixels in the border.
+
+2. Actually we don't have to measure all weights and distances of a hole pixel to all the borders pixels,
+but we can measure only the weights and distances of a hole pixel to its neighbors.
+In this case, the runtime is O(n) * O(1) = O(n) where n is the number of pixels in the hole.
+implantation in SecondAlgo.java
+
+3. I don't know

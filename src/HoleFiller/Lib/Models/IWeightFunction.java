@@ -1,4 +1,4 @@
-package Lib.Models;
+package HoleFiller.Lib.Models;
 
 @FunctionalInterface
 public interface IWeightFunction {

@@ -1,7 +1,7 @@
-package HoleFillerRunner;
+package HoleFiller.Runner;
 
-import Lib.Models.IWeightFunction;
-import Lib.Models.Pixel;
+import HoleFiller.Lib.Models.IWeightFunction;
+import HoleFiller.Lib.Models.Pixel;
 
 public class DefaultWeightFunction implements IWeightFunction {
 
@@ -17,9 +17,8 @@ public class DefaultWeightFunction implements IWeightFunction {
     @Override
     public double getWeight(Pixel p1, Pixel p2) {
         var distance = Math.pow(Math.pow(Math.abs(p1.x - p2.x), normDegree) + Math.pow(Math.abs(p1.y - p2.y),
-                normDegree),1.0/normDegree);
-        var x = (1/(this.epsilon + distance));
-        return 1/(this.epsilon + distance);
+                normDegree), 1.0 / normDegree);
+        return 1 / (this.epsilon + distance);
     }
 
 }

@@ -1,11 +1,12 @@
-package HoleFillerRunner;
+package HoleFiller.Runner;
 
-import Lib.Models.Image;
+import HoleFiller.Lib.Models.Image;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.core.Core;
+
 import static org.opencv.core.Core.NATIVE_LIBRARY_NAME;
 
 class ImageUtils {
@@ -13,18 +14,18 @@ class ImageUtils {
     public static final double BLACK_THRESHOLD = 0.05 * 255;
 
     public static Image mergeImages(Image image, Image maskedImage) {
-         validateImages(image, maskedImage);
-         Image mergedImage = new Image(image.width, image.height);
-         for (int x = 0; x < image.width; x++) {
-             for (int y = 0; y < image.height; y++) {
-                 // check if masked image pixel is black
-                 if (maskedImage.getPixel(x, y).getColor() < BLACK_THRESHOLD) {
-                     mergedImage.setPixel(x, y, -1);
-                 } else {
-                     mergedImage.setPixel(x, y, image.getPixel(x, y).getColor());
-                 }
-             }
-         }
+        validateImages(image, maskedImage);
+        Image mergedImage = new Image(image.width, image.height);
+        for (int x = 0; x < image.width; x++) {
+            for (int y = 0; y < image.height; y++) {
+                // check if masked image pixel is black
+                if (maskedImage.getPixel(x, y).getColor() < BLACK_THRESHOLD) {
+                    mergedImage.setPixel(x, y, -1);
+                } else {
+                    mergedImage.setPixel(x, y, image.getPixel(x, y).getColor());
+                }
+            }
+        }
         return mergedImage;
     }
 
@@ -40,12 +41,12 @@ class ImageUtils {
 
         //Reading the Image from the file and storing it in to a Matrix object
         Mat mat = new Mat(outputImage.height, outputImage.width, CvType.CV_8UC1);
-        for(int y=0;y<outputImage.height;y++){
-            for(int x=0;x<outputImage.width;x++){
+        for (int y = 0; y < outputImage.height; y++) {
+            for (int x = 0; x < outputImage.width; x++) {
                 mat.put(y, x, outputImage.getPixel(x, y).getColor());
             }
         }
-        imageCodecs.imwrite(fileName, mat);
+        Imgcodecs.imwrite(fileName, mat);
 
     }
 

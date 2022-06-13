@@ -1,11 +1,11 @@
-package Lib.Models;
+package HoleFiller.Lib.Models;
 
 public enum ConnectivityType {
     Four,
     Eight;
 
     public static ConnectivityType fromString(String x) {
-        switch(x) {
+        switch (x) {
             case "4":
                 return Four;
             case "8":

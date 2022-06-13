@@ -1,4 +1,4 @@
-package Lib.Models;
+package HoleFiller.Lib.Models;
 
 public class Pixel {
     public final int x;
@@ -11,11 +11,11 @@ public class Pixel {
         this.color = grayscale;
     }
 
-    public void setColor(double grayscale) {
-        this.color = grayscale;
-    }
-
     public double getColor() {
         return this.color;
+    }
+
+    public void setColor(double grayscale) {
+        this.color = grayscale;
     }
 }
