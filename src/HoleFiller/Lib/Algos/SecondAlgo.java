@@ -1,7 +1,6 @@
 package HoleFiller.Lib.Algos;
 
 import HoleFiller.Lib.HoleFillerAlgo;
-import HoleFiller.Lib.Models.ConnectivityType;
 import HoleFiller.Lib.Models.IWeightFunction;
 import HoleFiller.Lib.Models.Image;
 import HoleFiller.Lib.Models.Pixel;
@@ -20,8 +19,8 @@ public class SecondAlgo extends HoleFillerAlgo {
     // higher values will result in more accurate filling but will take longer to fill
     private static final int PRECISION_LEVEL = 0;
 
-    public SecondAlgo(ArrayList<Pixel> holePixels, Collection<Pixel> border, Image image, IWeightFunction weightFunction, ConnectivityType connectivityType) {
-        super(holePixels, border, image, weightFunction, connectivityType);
+    public SecondAlgo(ArrayList<Pixel> holePixels, Collection<Pixel> border, Image image, IWeightFunction weightFunction,neighborDirection neighborDirection) {
+        super(holePixels, border, image, weightFunction, neighborDirection);
     }
 
     @Override
@@ -37,7 +36,7 @@ public class SecondAlgo extends HoleFillerAlgo {
                     continue;
                 }
                 //find all neighbors of the current pixel which are not in the hole
-                updateNeighbors(pixel, currentNeighbors, image, connectivityType);
+                updateNeighbors(pixel, currentNeighbors, image, neighborDirection);
                 var borderNeighbors = currentNeighbors.stream().filter(neighbor -> neighbor.getColor() != -1).collect(Collectors.toList());
                 var holeNeighbors = currentNeighbors.stream().filter(neighbor -> neighbor.getColor() == -1).collect(Collectors.toList());
                 if(borderNeighbors.size() <= PRECISION_LEVEL) {
@@ -64,7 +63,7 @@ public class SecondAlgo extends HoleFillerAlgo {
     private Set<Pixel> getHoleEdge(Collection<Pixel> hole) {
         return hole.stream().filter(pixel -> {
             var currentNeighbors = new ArrayList<Pixel>();
-            updateNeighbors(pixel, currentNeighbors, image, connectivityType);
+            updateNeighbors(pixel, currentNeighbors, image, neighborDirection);
             if (currentNeighbors.stream().anyMatch(neighbor -> neighbor.getColor() == -1)) {
                 return true;
             }

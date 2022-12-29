@@ -18,4 +18,6 @@ public class Pixel {
     public void setColor(double grayscale) {
         this.color = grayscale;
     }
+
+
 }

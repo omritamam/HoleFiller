@@ -1,7 +1,7 @@
 package HoleFiller.Runner;
 
 import HoleFiller.Lib.HoleFiller;
-import HoleFiller.Lib.Models.ConnectivityType;
+
 import static HoleFiller.Runner.ImageUtils.*;
 
 public class Main {

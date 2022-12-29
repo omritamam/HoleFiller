@@ -1,9 +1,9 @@
 package HoleFiller.Lib;
 
-import HoleFiller.Lib.Models.ConnectivityType;
 import HoleFiller.Lib.Models.IWeightFunction;
 import HoleFiller.Lib.Models.Image;
 import HoleFiller.Lib.Models.Pixel;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -12,16 +12,16 @@ public abstract class HoleFillerAlgo {
     protected final Collection<Pixel> border;
     protected final Image image;
     protected final IWeightFunction weightFunction;
-    protected final ConnectivityType connectivityType;
+    protected final HoleFiller.Lib.Algos.neighborDirection neighborDirection;
 
     public abstract void fillHole();
 
-    protected HoleFillerAlgo(ArrayList<Pixel> holePixels, Collection<Pixel> border, Image image, IWeightFunction weightFunction, ConnectivityType connectivityType) {
+    protected HoleFillerAlgo(ArrayList<Pixel> holePixels, Collection<Pixel> border, Image image, IWeightFunction weightFunction, HoleFiller.Lib.Algos.neighborDirection neighborDirection) {
         this.holePixels = holePixels;
         this.border = border;
         this.image = image;
         this.weightFunction = weightFunction;
-        this.connectivityType = connectivityType;
+        this.neighborDirection = neighborDirection;
 
     }
 

@@ -1,7 +1,6 @@
 package HoleFiller.Lib.Algos;
 
 import HoleFiller.Lib.HoleFillerAlgo;
-import HoleFiller.Lib.Models.ConnectivityType;
 import HoleFiller.Lib.Models.IWeightFunction;
 import HoleFiller.Lib.Models.Image;
 import HoleFiller.Lib.Models.Pixel;
@@ -10,8 +9,8 @@ import java.util.Collection;
 
 public class FirstAlgo extends HoleFillerAlgo {
 
-    public FirstAlgo(ArrayList<Pixel> holePixels, Collection<Pixel> border, Image image, IWeightFunction weightFunction, ConnectivityType connectivityType) {
-        super(holePixels, border, image, weightFunction, connectivityType);
+    public FirstAlgo(ArrayList<Pixel> holePixels, Collection<Pixel> border, Image image, IWeightFunction weightFunction, neighborDirection neighborDirection) {
+        super(holePixels, border, image, weightFunction, neighborDirection);
     }
 
     public void fillHole() {
@@ -21,7 +20,7 @@ public class FirstAlgo extends HoleFillerAlgo {
         for (int i = 0; i < cores; i++) {
             var startPixelInd = i * super.holePixels.size() / cores;
             var endPixelInd = (i + 1) * holePixels.size() / cores;
-            var thread = new FirstAlgoThread(new ArrayList<>(holePixels.subList(startPixelInd, endPixelInd)), border, image, weightFunction, connectivityType);
+            var thread = new FirstAlgoThread(new ArrayList<>(holePixels.subList(startPixelInd, endPixelInd)), border, image, weightFunction, neighborDirection);
             threads[i] = new Thread(thread);
             threads[i].start();
         }
